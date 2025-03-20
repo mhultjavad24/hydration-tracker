@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-interface WaterGlassProps {
+type WaterGlassProps = {
   // Fill percentage (0 to 100)
   fillPercentage: number;
   // Optional width and height for the SVG
   width?: number;
   height?: number;
-}
+};
 
 const WaterGlass: React.FC<WaterGlassProps> = ({
   fillPercentage,
@@ -15,15 +15,15 @@ const WaterGlass: React.FC<WaterGlassProps> = ({
 }) => {
   // Ensure fillPercentage is between 0 and 100
   const normalizedFillPercentage = Math.min(100, Math.max(0, fillPercentage));
-  
+
   // Calculate the height of the water based on the fill percentage
   // We leave some space at the bottom (10%) and top (10%) of the glass
   const glassInnerHeight = height * 0.8;
   const waterHeight = (glassInnerHeight * normalizedFillPercentage) / 100;
   const waterY = height - waterHeight - height * 0.1; // Position from the bottom with offset
-  
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
         {/* Glass outline */}
         <path
@@ -38,7 +38,7 @@ const WaterGlass: React.FC<WaterGlassProps> = ({
           strokeWidth="2"
           fill="none"
         />
-        
+
         {/* Glass base */}
         <rect
           x={width * 0.15 - 10}
@@ -49,7 +49,7 @@ const WaterGlass: React.FC<WaterGlassProps> = ({
           ry="2"
           fill="#888"
         />
-        
+
         {/* Water */}
         {normalizedFillPercentage > 0 && (
           <path
@@ -64,7 +64,7 @@ const WaterGlass: React.FC<WaterGlassProps> = ({
             stroke="none"
           />
         )}
-        
+
         {/* Glass reflection */}
         <path
           d={`
@@ -77,7 +77,7 @@ const WaterGlass: React.FC<WaterGlassProps> = ({
           fill="rgba(255, 255, 255, 0.1)"
           stroke="none"
         />
-        
+
         {/* Water percentage text */}
         <text
           x={width / 2}
@@ -88,7 +88,8 @@ const WaterGlass: React.FC<WaterGlassProps> = ({
           fontSize={width * 0.1}
           fontWeight="bold"
         >
-          {Math.round(normalizedFillPercentage)}%
+          {Math.round(normalizedFillPercentage)}
+          %
         </text>
       </svg>
     </div>
