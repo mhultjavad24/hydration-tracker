@@ -1,18 +1,28 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import "./App.css";
 import WaterGlass from "./components/WaterGlass";
+import { getDatabase } from "./storage/Database";
 
 function App() {
   const [totalWater, setTotalWater] = useState(0);
   const MAX_CAPACITY = 3000; // 3 liters in milliliters
+  const db = useMemo(() => getDatabase(), []);
+
+  useEffect(() => {
+    // Load initial value from storage
+    setTotalWater(db.getValue());
+  }, [db]);
 
   const addWater = (amount: number) => {
-    setTotalWater(prev => Math.min(MAX_CAPACITY, prev + amount));
+    const newTotal = Math.min(MAX_CAPACITY, totalWater + amount);
+    setTotalWater(newTotal);
+    db.setValue(newTotal);
   };
 
   const resetWater = () => {
     setTotalWater(0);
+    db.reset();
   };
 
   const fillPercentage = (totalWater / MAX_CAPACITY) * 100;
