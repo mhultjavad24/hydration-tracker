@@ -1,21 +1,30 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import "./App.css";
 import WaterGlass from "./components/WaterGlass";
+import { createHydrationDatabase } from "./storage/Database";
 
 function App() {
   const [totalWater, setTotalWater] = useState(0);
-  const MAX_CAPACITY = 3000; // 3 liters in milliliters
+  const DAILY_WATER_GOAL_ML = 3000;
+  const db = useMemo(() => createHydrationDatabase(), []);
+
+  useEffect(() => {
+    setTotalWater(db.getValue());
+  }, [db]);
 
   const addWater = (amount: number) => {
-    setTotalWater(prev => Math.min(MAX_CAPACITY, prev + amount));
+    const newTotal = Math.min(DAILY_WATER_GOAL_ML, totalWater + amount);
+    setTotalWater(newTotal);
+    db.setValue(newTotal);
   };
 
   const resetWater = () => {
     setTotalWater(0);
+    db.reset();
   };
 
-  const fillPercentage = (totalWater / MAX_CAPACITY) * 100;
+  const fillPercentage = (totalWater / DAILY_WATER_GOAL_ML) * 100;
 
   return (
     <div
@@ -37,7 +46,7 @@ function App() {
           Total:
           {totalWater}
           ml /
-          {MAX_CAPACITY}
+          {DAILY_WATER_GOAL_ML}
           ml
         </p>
         <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
