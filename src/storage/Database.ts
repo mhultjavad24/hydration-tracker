@@ -21,7 +21,6 @@ export class LocalStorageDatabase implements Database {
   };
 }
 
-// Factory function to get the current database implementation
-export function getDatabase(): Database {
+export function createHydrationDatabase(): Database {
   return new LocalStorageDatabase();
 }
