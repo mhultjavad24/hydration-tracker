@@ -4,7 +4,18 @@ import "./App.css";
 import WaterGlass from "./components/WaterGlass";
 
 function App() {
-  const [fillPercentage, setFillPercentage] = useState(65);
+  const [totalWater, setTotalWater] = useState(0);
+  const MAX_CAPACITY = 3000; // 3 liters in milliliters
+
+  const addWater = (amount: number) => {
+    setTotalWater(prev => Math.min(MAX_CAPACITY, prev + amount));
+  };
+
+  const resetWater = () => {
+    setTotalWater(0);
+  };
+
+  const fillPercentage = (totalWater / MAX_CAPACITY) * 100;
 
   return (
     <div
@@ -21,22 +32,20 @@ function App() {
 
       <WaterGlass fillPercentage={fillPercentage} />
 
-      <div style={{ width: "80%", maxWidth: "300px" }}>
-        <label htmlFor="fillSlider" style={{ display: "block", marginBottom: "10px" }}>
-          Water Level:
-          {" "}
-          {fillPercentage}
-          %
-        </label>
-        <input
-          id="fillSlider"
-          type="range"
-          min="0"
-          max="100"
-          value={fillPercentage}
-          onChange={e => setFillPercentage(Number(e.target.value))}
-          style={{ width: "100%" }}
-        />
+      <div style={{ textAlign: "center" }}>
+        <p>
+          Total:
+          {totalWater}
+          ml /
+          {MAX_CAPACITY}
+          ml
+        </p>
+        <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+          <button type="button" onClick={() => addWater(330)}>Add 33cl</button>
+          <button type="button" onClick={() => addWater(500)}>Add 50cl</button>
+          <button type="button" onClick={() => addWater(1000)}>Add 100cl</button>
+        </div>
+        <button type="button" onClick={resetWater}>Reset</button>
       </div>
     </div>
   );

@@ -1,9 +1,7 @@
 import React from "react";
 
 type WaterGlassProps = {
-  // Fill percentage (0 to 100)
   fillPercentage: number;
-  // Optional width and height for the SVG
   width?: number;
   height?: number;
 };
@@ -13,80 +11,72 @@ const WaterGlass: React.FC<WaterGlassProps> = ({
   width = 200,
   height = 300,
 }) => {
-  // Ensure fillPercentage is between 0 and 100
   const normalizedFillPercentage = Math.min(100, Math.max(0, fillPercentage));
-
-  // Calculate the height of the water based on the fill percentage
-  // We leave some space at the bottom (10%) and top (10%) of the glass
-  const glassInnerHeight = height * 0.8;
-  const waterHeight = (glassInnerHeight * normalizedFillPercentage) / 100;
-  const waterY = height - waterHeight - height * 0.1; // Position from the bottom with offset
 
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-        {/* Glass outline */}
-        <path
-          d={`
-            M ${width * 0.2} ${height * 0.1}
-            L ${width * 0.15} ${height * 0.9}
-            L ${width * 0.85} ${height * 0.9}
-            L ${width * 0.8} ${height * 0.1}
-            Z
-          `}
-          stroke="#666"
-          strokeWidth="2"
-          fill="none"
-        />
+        <defs>
+          <linearGradient id="waterContainer" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style={{ stopColor: "#e1f5fe", stopOpacity: 0.3 }} />
+            <stop offset="100%" style={{ stopColor: "#b3e5fc", stopOpacity: 0.5 }} />
+          </linearGradient>
 
-        {/* Glass base */}
+          <linearGradient id="waterFill" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style={{ stopColor: "#0288d1", stopOpacity: 0.9 }} />
+            <stop offset="100%" style={{ stopColor: "#039be5", stopOpacity: 0.8 }} />
+          </linearGradient>
+
+          <filter id="containerShadow" height="130%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+            <feOffset dx="2" dy="2" result="offsetblur" />
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.4" />
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Container background */}
         <rect
-          x={width * 0.15 - 10}
-          y={height * 0.9}
-          width={width * 0.7 + 20}
-          height={height * 0.05}
-          rx="2"
-          ry="2"
-          fill="#888"
+          x={width * 0.1}
+          y={height * 0.1}
+          width={width * 0.8}
+          height={height * 0.8}
+          rx={20}
+          fill="url(#waterContainer)"
+          stroke="#81d4fa"
+          strokeWidth="2"
+          filter="url(#containerShadow)"
         />
 
-        {/* Water */}
-        {normalizedFillPercentage > 0 && (
-          <path
-            d={`
-              M ${width * 0.15} ${height * 0.9}
-              L ${width * 0.85} ${height * 0.9}
-              L ${width * 0.85 - (width * 0.05 * normalizedFillPercentage / 100)} ${waterY}
-              L ${width * 0.15 + (width * 0.05 * normalizedFillPercentage / 100)} ${waterY}
-              Z
-            `}
-            fill="rgba(52, 152, 219, 0.8)"
-            stroke="none"
-          />
-        )}
-
-        {/* Glass reflection */}
-        <path
-          d={`
-            M ${width * 0.25} ${height * 0.15}
-            L ${width * 0.22} ${height * 0.7}
-            L ${width * 0.35} ${height * 0.7}
-            L ${width * 0.38} ${height * 0.15}
-            Z
-          `}
-          fill="rgba(255, 255, 255, 0.1)"
-          stroke="none"
+        {/* Water fill */}
+        <rect
+          x={width * 0.15}
+          y={height * 0.15 + (height * 0.7 * (100 - normalizedFillPercentage) / 100)}
+          width={width * 0.7}
+          height={height * 0.7 * normalizedFillPercentage / 100}
+          fill="url(#waterFill)"
+          style={{
+            transition: "y 0.3s ease-out, height 0.3s ease-out",
+          }}
         />
 
-        {/* Water percentage text */}
+        {/* Percentage text */}
         <text
           x={width / 2}
           y={height / 2}
           textAnchor="middle"
           dominantBaseline="middle"
-          fill="#333"
-          fontSize={width * 0.1}
+          fill="#01579b"
+          fontSize={width * 0.15}
           fontWeight="bold"
+          style={{
+            textShadow: "1px 1px 2px rgba(255, 255, 255, 0.5)",
+          }}
         >
           {Math.round(normalizedFillPercentage)}
           %
