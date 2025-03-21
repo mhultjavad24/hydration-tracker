@@ -1,4 +1,4 @@
-name: Lint project
+name: Verify project
 on:
   pull_request:
     branches:
@@ -17,3 +17,4 @@ jobs:
           node-version: 22.x
       - run: npm ci
       - run: npm run lint
+      - run: npm test
